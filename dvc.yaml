@@ -1,0 +1,23 @@
+stages:
+
+  make_datasets:
+    cmd:
+      - python -m src.data.make_datasets data/raw/action_train.csv data/raw/person.csv data/processed/train_dataset.parquet
+      - python -m src.data.make_datasets data/raw/action_test.csv data/raw/person.csv data/processed/test_dataset.parquet
+    deps:
+      - data/raw/action_train.csv
+      - data/raw/action_test.csv
+      - data/raw/person.csv
+      - src/data/make_datasets.py
+    outs:
+      - data/processed/train_dataset.parquet
+      - data/processed/test_dataset.parquet
+
+  train_lgbm:
+    cmd:
+      - python -m src.models.train_lgbm data/processed/train_dataset.csv models/lgbm.pkl
+    deps:
+      - data/processed/train_dataset.parquet
+      - src/models/train_lgbm.py
+    outs:
+      - models/lgbm.pkl
